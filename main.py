@@ -88,7 +88,6 @@ def high_raise_symbol( ):
 
     return (high_7, high_25, high_99)
 
-
 def run( ):
 
     BiApis = BiApi.BinanceKlineApi()
@@ -119,8 +118,3 @@ def run( ):
 
 if __name__ == "__main__":
    run()
-
-
-
-
-
