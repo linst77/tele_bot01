@@ -18,7 +18,7 @@ class Find_rise_one():
     def compare( self):
 
         ### make list 100 by high volume
-        self.all_symbol = sorted( self.all_symbol, key=lambda x: x[2])[-100:]
+        self.all_symbol = sorted( self.all_symbol, key=lambda x: x[2])[-150:]
 
         for i in self.all_symbol:
             current_price = float( i[1])

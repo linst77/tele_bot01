@@ -8,32 +8,6 @@ import jf_api.find_symbol as japi
 import ccxt
 import asyncio
 
-def buy_doge( client):
-    usdtBalance = client.get_asset_balance(asset='USDT').get('free')
-    if float( usdtBalance) > 5:
-        order_buy = client.order_market_buy(symbol='DOGEUSDT', quoteOrderQty=usdtBalance)
-        info = {
-            "Symbol": str(order_buy['fills'][0]['commissionAsset']),
-            "order_price": order_buy['fills'][0]['price'],
-            "qty": order_buy['fills'][0]['qty'],
-            "commission": order_buy['fills'][0]['commission'],
-        }
-        return info
-    else:
-        return "Stay"
-def sell_doge( client):
-    dogeBalance = client.get_asset_balance(asset='DOGE').get('free')
-    if float( dogeBalance) > 5:
-        order_buy = client.order_market_sell(symbol='DOGEUSDT', quantity=int(float(dogeBalance)))
-        info = {
-            "Symbol": str(order_buy['fills'][0]['commissionAsset']),
-            "order_price": order_buy['fills'][0]['price'],
-            "qty": order_buy['fills'][0]['qty'],
-            "commission": order_buy['fills'][0]['commission'],
-        }
-        return info
-    else:
-        return "Stay"
 def ema_indicator799( ema7, ema99):
     if ema7 >= ema99:
         status = True
@@ -46,26 +20,6 @@ def ema_indicator725( ema7, ema25):
     if ema25 > ema7:
         status = False
     return status
-
-def buy_sell( status725, status799, client):
-    msr = MS.MsrBot()
-
-    if status799 == True:
-        msr.send_message("Golden")
-        info = buy_doge( client)
-        return info
-
-    elif status799 == False:
-        msr.send_message("Death")
-
-        if status725 == True:
-            info = buy_doge( client)
-            return info
-        else:
-            info = sell_doge( client)
-            return info
-
-
 
 
 import ccxt
@@ -93,28 +47,61 @@ def run( ):
     BiApis = BiApi.BinanceKlineApi()
     client = BiApis.get_client
     msr = MS.MsrBot()
-    status7_99 = None
 
+    count = 0
+    cross7_99 = True
+    cross7_25 = False
 
     while True:
-        ema7 = BiApis.Get_ema('DOGEUSDT', '30m', 7)
-        ema25 = BiApis.Get_ema('DOGEUSDT', '30m', 25)
-        ema99 = BiApis.Get_ema('DOGEUSDT', '30m', 99)
+        ema7 = BiApis.Get_ema('BTCUSDT', '30m', 7)
+        ema25 = BiApis.Get_ema('BTCUSDT', '30m', 25)
+        ema99 = BiApis.Get_ema('BTCUSDT', '30m', 99)
+        ema150 = BiApis.Get_ema('BTCUSDT', '30m', 150)
+
+
+        pema7 = BiApis.Get_past_ema('BTCUSDT', '30m', date=(2024, 4,21), length=7)
+        pema25 = BiApis.Get_past_ema('BTCUSDT', '30m', date=(2024, 4,21), length=25)
+        pema99 = BiApis.Get_past_ema('BTCUSDT', '30m', date=(2024, 4,21), length=99)
+        pema150 = BiApis.Get_past_ema('BTCUSDT', '30m', date=(2024, 4,21), length=150)
 
         status7_25 = ema_indicator725( ema7, ema25)
         status7_99 = ema_indicator799( ema7, ema99)
 
-        message = buy_sell( status7_25, status7_99, client)
+        # message = buy_sell( status7_25, status7_99, client)
 
-        msr.send_message( "ema7:" + str( ema7) + "ema25:" + str( ema25) + "ema99:" + str( ema99))
-        msr.send_message( message)
 
-        d7, d25, d99 = high_raise_symbol()
-        msr.send_message( str( d7))
-        msr.send_message( str( d25))
-        msr.send_message( str( d99))
+        # golden cross or death cross 7ma 99ma
+        if status7_99 != cross7_99:
+            if status7_99 == True:
+                msr.send_message("BTC Golden Cross 7ma, 99ma")
+                cross7_99 = status7_99
+            else:
+                msr.send_message("BTC Death Cross 7ma, 99ma --- Must Sell ---")
+                cross7_99 = status7_99
 
-        time.sleep( 30 * 60)
+
+        # golden cross or death cross 7ma 99ma
+        if status7_25 != cross7_25:
+            if status7_25 == True:
+                msr.send_message("BTC Golden Cross 7ma, 25ma")
+                cross7_25 = status7_25
+            else:
+                msr.send_message("BTC Death Cross 7ma, 25ma")
+                cross7_25 = status7_25
+
+        # 20 min to send raised symbol
+        if count % 30 == 0:
+
+            # most raised symbol
+            d7, d25, d99 = high_raise_symbol()
+            msr.send_message( "---30분 Symbol 정보---")
+            msr.send_message( "현가격이 7일선 높믄종목 - " + str( d7))
+            msr.send_message( "현가격이 25일선 높은정목 - " + str( d25))
+
+        count += 1
+
+        print ( count)
+        time.sleep( 1 * 60)
 
 if __name__ == "__main__":
    run()
