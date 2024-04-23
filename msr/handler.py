@@ -34,7 +34,7 @@ class Telegram( metaclass=Singleton):
 
         url = f"https://api.telegram.org/bot{self.token}/sendMessage"
         payload = {
-            "chat_id": self.secret,
+            "chat_id": "@jeffbotleading",
             "text": text
         }
         response = requests.post(url, payload)
