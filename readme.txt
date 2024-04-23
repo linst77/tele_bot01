@@ -25,4 +25,5 @@ ps -ef |grep nohup
 kill 21361
 
 
-
+# Linux delete folder
+sudo rm -r (folder or file)
