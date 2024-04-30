@@ -59,10 +59,10 @@ def run( ):
         ema150 = BiApis.Get_ema('BTCUSDT', '30m', 150)
 
 
-        pema7 = BiApis.Get_past_ema('BTCUSDT', '30m', date=(2024, 4,21), length=7)
-        pema25 = BiApis.Get_past_ema('BTCUSDT', '30m', date=(2024, 4,21), length=25)
-        pema99 = BiApis.Get_past_ema('BTCUSDT', '30m', date=(2024, 4,21), length=99)
-        pema150 = BiApis.Get_past_ema('BTCUSDT', '30m', date=(2024, 4,21), length=150)
+        #pema7 = BiApis.Get_past_ema('BTCUSDT', '30m', date=(2024, 4,21), length=7)
+        #pema25 = BiApis.Get_past_ema('BTCUSDT', '30m', date=(2024, 4,21), length=25)
+        #pema99 = BiApis.Get_past_ema('BTCUSDT', '30m', date=(2024, 4,21), length=99)
+        #pema150 = BiApis.Get_past_ema('BTCUSDT', '30m', date=(2024, 4,21), length=150)
 
         status7_25 = ema_indicator725( ema7, ema25)
         status7_99 = ema_indicator799( ema7, ema99)
@@ -99,8 +99,8 @@ def run( ):
             msr.send_message( "현가격이 25일선 높은정목 - " + str( d25))
 
         count += 1
-
-        print ( count)
+        del( ema7, ema25, ema99, ema150)
+        #print ( count)
         time.sleep( 1 * 60)
 
 if __name__ == "__main__":
